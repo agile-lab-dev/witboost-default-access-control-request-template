@@ -1,0 +1,45 @@
+apiVersion: witboost.com/v1
+kind: AccessControlRequestTemplate
+metadata:
+  name: access-request-template
+  title: Access Request Template
+  description: Template definition for requesting access to a resource
+spec:
+  type: grant
+  parameters:
+    - title: Access Request
+      required:
+        - identities
+        - motivation
+      properties:
+        identities:
+          title: Identities
+          type: array
+          description: Select users/groups that you are requesting access
+          ui:field: IdentitiesPicker
+          ui:options:
+            maxIdentities: 5
+            showOnlyUserMemberGroups: true
+            allowedKinds:
+              - user
+              - group
+        motivation:
+          title: Motivation
+          type: string
+          description: Motivate your request
+          ui:options:
+            multiline: true
+            rows: 6
+
+  steps:
+    - id: send_request
+      name: Send Request
+      action: access-request:send
+      input:
+        identities: '${{ parameters.identities }}'
+        fields:
+          identities: '${{ parameters.identities }}'
+          motivation: '${{ parameters.motivation }}'
+        displayFields:
+          - title: Motivation
+            text: '${{ parameters.motivation }}'

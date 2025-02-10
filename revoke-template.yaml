@@ -1,0 +1,43 @@
+apiVersion: witboost.com/v1
+kind: AccessControlRequestTemplate
+metadata:
+  name: revoke-request-template
+  title: Revoke Request Template
+  description: Template definition for requesting a revoke to a resource
+spec:
+  type: revoke
+  parameters:
+    - title: Revoke Request
+      required:
+        - identities
+        - motivation
+      properties:
+        identities:
+          title: Identities
+          type: array
+          description: Select users/groups for which you want to request a revoke
+          ui:field: AccessControlListPicker
+          ui:options:
+            allowedKinds:
+              - user
+              - group
+        motivation:
+          title: Motivation
+          type: string
+          description: Motivate your request
+          ui:options:
+            multiline: true
+            rows: 6
+
+  steps:
+    - id: send_request
+      name: Send Request
+      action: revoke-request:send
+      input:
+        identities: '${{ parameters.identities }}'
+        fields:
+          identities: '${{ parameters.identities }}'
+          motivation: '${{ parameters.motivation }}'
+        displayFields:
+          - title: Motivation
+            text: '${{ parameters.motivation }}'
